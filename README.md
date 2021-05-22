@@ -6,4 +6,4 @@
 <h4><span style="color:blue"> Step 1 : </span> clone repo https as its public </h4>
 <h4><span style="color:blue"> Step 2 : </span> create python3 virtual environment ~python3 -m venv env_name OR by pyenv </h4>
 <h4><span style="color:blue"> Step 3 : </span> install all dependencies ~pip install -r requirements.txt </h4>
-<h4><span style="color:blue"> Step 4 : </span> run main.py </h4>
+<h4><span style="color:blue"> Step 4 : </span> run main file ~python main.py </h4>
