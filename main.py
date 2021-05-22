@@ -4,6 +4,9 @@ from tkinter import END
 
 import requests
 
+from constants import ERRORS, METHOD_LIST
+from response_processor import ResponseProcessor
+
 
 class Dakiya:
     """
@@ -32,7 +35,7 @@ class Dakiya:
         self.option.grid(row=5, stick="W", padx=10, pady=10)
 
         # submit button
-        self.button1 = tk.Button(text="Send", command=self.pre_call_check)
+        self.button1 = tk.Button(text="Send", command=self.pre_check)
         self.button1.config(bg='#553D67', fg='white')
         self.button1.grid(row=7, sticky="W", padx=10, pady=10)
 
@@ -54,25 +57,52 @@ class Dakiya:
         self.text.delete("1.0", END)
         self.text.insert(END, output)
 
-    def pre_call_check(self):
+    def pre_check(self):
+        """
+        check before calling request
+        :return: errors or method_check()
+        """
+        _method = self.var.get()
+        _url = self.entry_field1.get()
+        if not _url:
+            return ResponseProcessor.show_error_box(title="Empty url", error=ERRORS["INVALID_URL"])
+        if _method not in METHOD_LIST:
+            return ResponseProcessor.show_error_box(title="http method type not found",
+                                                    error=ERRORS["METHOD_NOT_SUPPLIED"])
+        return self.method_check(_method, _url)
+
+    def method_check(self, _method, _url):
         """
         method call on send
-        :return: method
+        :return: show_output()
         """
-        if self.var.get() == "get":
-            _response = self.get_method(self.entry_field1.get())
+
+        if _method == "get":
+            _response = self.get_method(_url)
+            return self.show_output(_response)
+        elif _method == "post":
+            _response = self.post_method(_url)
             return self.show_output(_response)
 
     @staticmethod
     def get_method(url):
-        """
-        when user submit get request, calling get_method
-        :return: get response
-        """
-        _response = requests.get(str(url))
-        if _response.status_code == 200:
-            return _response.text
-        return "Some error"
+        response_processor = ResponseProcessor()
+        try:
+            _response = requests.get(str(url))
+        except Exception as e:
+            return ResponseProcessor.show_error_box(title="error in get request", error=e)
+        else:
+            return response_processor.process_response(_response=_response)
+
+    @staticmethod
+    def post_method(url):
+        response_processor = ResponseProcessor()
+        try:
+            _response = requests.post(str(url))
+        except Exception as e:
+            return ResponseProcessor.show_error_box(title="error in post request", error=e)
+        else:
+            return response_processor.process_response(_response=_response)
 
 
 Dakiya()
