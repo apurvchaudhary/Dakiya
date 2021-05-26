@@ -8,7 +8,9 @@ INFO_MESSAGE = {
 
 
 class ResponseProcessor:
-
+    """
+    processing http response
+    """
     @staticmethod
     def show_error_box(title, error):
         messagebox.showerror(title, error)
